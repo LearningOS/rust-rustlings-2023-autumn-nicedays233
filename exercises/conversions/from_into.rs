@@ -44,6 +44,35 @@ impl Default for Person {
 
 impl From<&str> for Person {
     fn from(s: &str) -> Person {
+        // 如果字符串为空，返回默认Person
+        if s.trim().is_empty() {
+            return Person::default();
+        }
+
+        // 分割字符串以获取姓名和年龄
+        let parts: Vec<&str> = s.split(',').collect();
+
+        // 如果分割后的字符串不是两部分，则返回默认Person
+        if parts.len() != 2 {
+            return Person::default();
+        }
+
+        let name = parts[0].trim();
+        let age_str = parts[1].trim();
+
+        // 如果姓名为空，返回默认Person
+        if name.is_empty() {
+            return Person::default();
+        }
+
+        // 尝试将年龄部分解析为usize
+        match age_str.parse::<usize>() {
+            Ok(age) => Person {
+                name: String::from(name),
+                age, // 使用解析的年龄
+            },
+            Err(_) => Person::default(), // 如果解析失败，返回默认Person
+        }
     }
 }
 
