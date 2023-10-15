@@ -11,7 +11,7 @@ fn main() {
         .duration_since(std::time::UNIX_EPOCH)
         .unwrap()
         .as_secs(); // What's the use of this timestamp here?
-    std::env::set_var("FOO", timestamp);
+    // std::env::set_var("FOO", timestamp);
     println!("cargo:rustc-env=TEST_FOO={}", timestamp);
 
 
