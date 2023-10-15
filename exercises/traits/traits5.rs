@@ -9,6 +9,8 @@
 
 // I AM NOT DONE
 
+
+
 pub trait SomeTrait {
     fn some_function(&self) -> bool {
         true
@@ -29,8 +31,9 @@ impl OtherTrait for SomeStruct {}
 impl SomeTrait for OtherStruct {}
 impl OtherTrait for OtherStruct {}
 
+
 // YOU MAY ONLY CHANGE THE NEXT LINE
-fn some_func(item: ??) -> bool {
+fn some_func(item: impl SomeTrait + OtherTrait) -> bool {
     item.some_function() && item.other_function()
 }
 

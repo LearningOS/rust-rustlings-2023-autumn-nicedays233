@@ -7,6 +7,7 @@
 
 use std::sync::mpsc;
 use std::sync::Arc;
+use std::sync::Mutex;
 use std::thread;
 use std::time::Duration;
 
@@ -26,10 +27,12 @@ impl Queue {
     }
 }
 
-fn send_tx(q: Queue, tx: mpsc::Sender<u32>) -> () {
+fn send_tx(q: Queue, tx: mpsc::Sender<u32>, done_counter: Arc<Mutex<u32>>) -> () {
     let qc = Arc::new(q);
     let qc1 = Arc::clone(&qc);
     let qc2 = Arc::clone(&qc);
+    let tx1 = tx.clone();
+    let done_counter1 = Arc::clone(&done_counter);
 
     thread::spawn(move || {
         for val in &qc1.first_half {
@@ -37,14 +40,17 @@ fn send_tx(q: Queue, tx: mpsc::Sender<u32>) -> () {
             tx.send(*val).unwrap();
             thread::sleep(Duration::from_secs(1));
         }
+        *done_counter.lock().unwrap() += 1;
     });
+
 
     thread::spawn(move || {
         for val in &qc2.second_half {
             println!("sending {:?}", val);
-            tx.send(*val).unwrap();
+            tx1.send(*val).unwrap();
             thread::sleep(Duration::from_secs(1));
         }
+        *done_counter1.clone().lock().unwrap() += 1;
     });
 }
 
@@ -52,8 +58,17 @@ fn main() {
     let (tx, rx) = mpsc::channel();
     let queue = Queue::new();
     let queue_length = queue.length;
+    let done_counter = Arc::new(Mutex::new(0));
 
-    send_tx(queue, tx);
+    // send_tx(queue, tx, );
+    send_tx(queue, tx.clone(), Arc::clone(&done_counter));
+
+    thread::spawn(move || {
+        while *done_counter.lock().unwrap() < 2 {
+            thread::sleep(Duration::from_millis(100));
+        }
+        drop(tx);  // Close the channel by dropping the sender once all threads are done.
+    });
 
     let mut total_received: u32 = 0;
     for received in rx {
