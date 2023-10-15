@@ -3,6 +3,7 @@
 //! You should modify this file to make both exercises pass.
 
 fn main() {
+    println!("cargo:rerun-if-changed=build.rs");
     // In tests7, we should set up an environment variable
     // called `TEST_FOO`. Print in the standard output to let
     // Cargo do it.
@@ -10,13 +11,15 @@ fn main() {
         .duration_since(std::time::UNIX_EPOCH)
         .unwrap()
         .as_secs(); // What's the use of this timestamp here?
-    // std::env::set_var("FOO", timestamp);
+    std::env::set_var("FOO", timestamp);
     println!("cargo:rustc-env=TEST_FOO={}", timestamp);
+
 
     // In tests8, we should enable "pass" feature to make the
     // testcase return early. Fill in the command to tell
     // Cargo about that.
     println!("cargo:rustc-cfg=feature=\"pass\"");
+
 
 
 }

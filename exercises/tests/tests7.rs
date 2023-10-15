@@ -40,10 +40,14 @@ fn main() {}
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    // use super::*;
+    // use std::env;
 
     #[test]
     fn test_success() {
+        for (key, value) in env::vars() {
+            println!("{}: {}", key, value);
+        }
         let timestamp = std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
             .unwrap()
