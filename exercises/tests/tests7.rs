@@ -49,8 +49,8 @@ mod tests {
             .duration_since(std::time::UNIX_EPOCH)
             .unwrap()
             .as_secs();
-        // let s = std::env::var("TEST_FOO").unwrap();
-        // let e: u64 = s.parse().unwrap();
-        // assert!(timestamp >= e && timestamp < e + 10);
+        let s = std::env::var("TEST_FOO").unwrap();
+        let e: u64 = s.parse().unwrap();
+        assert!(timestamp >= e && timestamp < e + 10);
     }
 }

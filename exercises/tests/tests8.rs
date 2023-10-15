@@ -17,7 +17,7 @@ mod tests {
 
     #[test]
     fn test_success() {
-        // #[cfg(feature = "pass")]
+        #[cfg(feature = "pass")]
         return;
 
         panic!("no cfg set");
